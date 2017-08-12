@@ -7,6 +7,7 @@ from sklearn.linear_model import LinearRegression
 import datetime
 import matplotlib.pyplot as plot
 from matplotlib import style
+import pickle
 
 style.use('ggplot')
 
@@ -41,13 +42,17 @@ print(len(X), len(Y))
 
 X_train, X_test, Y_train, Y_test = model_selection.train_test_split(X, Y, test_size=0.2)
 
-classifier = LinearRegression(n_jobs=-1)
-# Train
-classifier.fit(X_train, Y_train)
-# Test
-accuracy = classifier.score(X_test, Y_test)
-print("Linear Regression Accuracy:")
-print(accuracy)
+# classifier = LinearRegression(n_jobs=-1)
+# # Train
+# classifier.fit(X_train, Y_train)
+# # Test
+# accuracy = classifier.score(X_test, Y_test)
+# print("Linear Regression Accuracy:")
+# print(accuracy)
+
+pickle_in = open('linearRegression.pickle','rb')
+classifier = pickle.load(pickle_in)
+
 
 # prediction
 forecast_set = classifier.predict(X_lately)
@@ -75,6 +80,11 @@ plot.legend(loc=4)
 plot.xlabel('Date')
 plot.ylabel('Price')
 plot.show()
+
+with open('linearRegression.pickle', 'wb') as f:
+    pickle.dump(classifier, f)
+
+
 
 
 # print("Support Vector Regression Accuracy:")
