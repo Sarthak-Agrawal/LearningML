@@ -74,6 +74,7 @@ for i in forecast_set:
 print(df.tail())
 
 plot.switch_backend('TkAgg')
+# print(type(df['Adj. Close']))
 df['Adj. Close'].plot()
 df['Forecast'].plot()
 plot.legend(loc=4)
