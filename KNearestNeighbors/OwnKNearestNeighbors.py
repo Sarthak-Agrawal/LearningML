@@ -1,21 +1,9 @@
 import numpy as np
-from math import sqrt
 import warnings
-import matplotlib.pyplot as plot
-from matplotlib import style
 from collections import Counter
+import pandas as pd
+import random
 
-from pip._vendor import colorama
-
-style.use('fivethirtyeight')
-plot.switch_backend('TkAgg')
-
-dataset = {'k': [[1, 2], [2, 3], [3, 1]], 'r': [[6, 5], [7, 7], [8, 6]]}
-newFeatures = [5, 7]
-
-for i in dataset:
-    for j in dataset[i]:
-        plot.scatter(j[0], j[1], s=50, color=i)
 
 def kNearestNeighbors(data, predict, k=3):
     if len(data) >= k:
@@ -34,13 +22,44 @@ def kNearestNeighbors(data, predict, k=3):
         # adding the groups in votes
         votes.append(i[1])
 
-    print(Counter(votes).most_common(1))
+    # print(Counter(votes).most_common(1))
     voteResult = Counter(votes).most_common(1)[0][0]
     return voteResult
 
 
-result = kNearestNeighbors(dataset, newFeatures, k=3)
-print(result)
+df = pd.read_csv("breast-cancer-wisconsin.data")
+df.replace('?', -99999, inplace=True)
+df.drop(['id'], 1, inplace=True)
+# Converting data to float(some data was coming in form of string)
+fullData = df.astype(float).values.tolist()
+random.shuffle(fullData)
 
-plot.scatter(newFeatures[0], newFeatures[1], s=30)
-plot.show()
+testSize = 0.2
+trainSet = {
+    2: [],
+    4: []
+}
+testSet = {
+    2: [],
+    4: []
+}
+trainData = fullData[:-int(testSize*len(fullData))]
+testData = fullData[-int(testSize*len(fullData)):]
+
+for i in trainData:
+    trainSet[i[-1]].append(i[:-1])
+
+for i in testData:
+    testSet[i[-1]].append(i[:-1])
+
+correct = 0
+total = 0
+
+for group in testSet:
+    for data in testSet[group]:
+        vote = kNearestNeighbors(trainSet, data, k=5)
+        if group == vote:
+            correct += 1
+        total += 1
+
+print("Accuracy : ", correct/total)
