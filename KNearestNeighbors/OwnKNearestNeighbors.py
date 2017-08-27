@@ -24,42 +24,51 @@ def kNearestNeighbors(data, predict, k=3):
 
     # print(Counter(votes).most_common(1))
     voteResult = Counter(votes).most_common(1)[0][0]
-    return voteResult
+    confidence = Counter(votes).most_common(1)[0][1] / k
+    return voteResult, confidence
 
 
-df = pd.read_csv("breast-cancer-wisconsin.data")
-df.replace('?', -99999, inplace=True)
-df.drop(['id'], 1, inplace=True)
-# Converting data to float(some data was coming in form of string)
-fullData = df.astype(float).values.tolist()
-random.shuffle(fullData)
+accuracies = []
 
-testSize = 0.2
-trainSet = {
-    2: [],
-    4: []
-}
-testSet = {
-    2: [],
-    4: []
-}
-trainData = fullData[:-int(testSize*len(fullData))]
-testData = fullData[-int(testSize*len(fullData)):]
+for i in range(25):
+    df = pd.read_csv("breast-cancer-wisconsin.data")
+    df.replace('?', -99999, inplace=True)
+    df.drop(['id'], 1, inplace=True)
+    # Converting data to float(some data was coming in form of string)
+    fullData = df.astype(float).values.tolist()
+    random.shuffle(fullData)
 
-for i in trainData:
-    trainSet[i[-1]].append(i[:-1])
+    testSize = 0.2
+    trainSet = {
+        2: [],
+        4: []
+    }
+    testSet = {
+        2: [],
+        4: []
+    }
+    trainData = fullData[:-int(testSize*len(fullData))]
+    testData = fullData[-int(testSize*len(fullData)):]
 
-for i in testData:
-    testSet[i[-1]].append(i[:-1])
+    for i in trainData:
+        trainSet[i[-1]].append(i[:-1])
 
-correct = 0
-total = 0
+    for i in testData:
+        testSet[i[-1]].append(i[:-1])
 
-for group in testSet:
-    for data in testSet[group]:
-        vote = kNearestNeighbors(trainSet, data, k=5)
-        if group == vote:
-            correct += 1
-        total += 1
+    correct = 0
+    total = 0
 
-print("Accuracy : ", correct/total)
+    for group in testSet:
+        for data in testSet[group]:
+            vote, confidence = kNearestNeighbors(trainSet, data, k=5)
+            if group == vote:
+                correct += 1
+            # else:
+                # print(confidence)
+            total += 1
+
+    print("Accuracy : ", correct/total)
+    accuracies.append(correct/total)
+
+print(sum(accuracies)/len(accuracies))
