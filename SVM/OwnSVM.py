@@ -87,10 +87,57 @@ class SupportVectorMachine:
                 latestOptimum = optimumChoice[0][0] + step*2
 
     def predict(self, features):
-        # sign( x.w + b )
+        # classification = sign( x.w + b )
         classification = np.sign(np.dot(np.array(features), self.w) + self.b)
-
+        if classification != 0 and self.visualization:
+            self.axis.scatter(features[0], features[1], size=200, marker='*', c=self.colors[classification])
         return classification
+
+
+    def visualize(self):
+        for i in dataDict:
+            for x in dataDict[i]:
+                self.axis.scatter(x[0], x[1], s=100, color=self.colors[i])
+
+        # hyperplane=x.w + b
+        # v = x.w + b
+        # psv = 1, nsv = -1, decisionBoundary = 0
+        def hyperplane(x, w, b, v):
+            # Given the x point determine the y point
+            # x,y is an unknown point on the hyperplane
+            # x_v and w_v are the vector
+            # x_v= [x,y]
+            # x_v.w_v+b =1 for postive sv
+            # x.w[0] + y.w[1] + b =1
+            # y = -x.w[0] - b + 1 / w[1]
+            # So we get our y co-ordinate to plot it.
+            return (-w[0]*x - b + v)/w[i]
+
+        # dataranges for graphs
+        datarange = (self.min_feature_value*0.9, self.max_feature_value*1.1)
+        hypXMin = datarange[0]
+        hypXMax = datarange[1]
+
+        # positive support vector hyperplane
+        # x.w + b = 1
+        psv1 = hyperplane(hypXMin, self.w, self.b, 1)
+        psv2 = hyperplane(hypXMax, self.w, self.b, 1)
+        self.axis.plot([hypXMin, hypXMax], [psv1, psv2], 'k')
+
+        # negative support vector hyperplane
+        # x.w + b = -1
+        nsv1 = hyperplane(hypXMin, self.w, self.b, -1)
+        nsv2 = hyperplane(hypXMax, self.w, self.b, -1)
+        self.axis.plot([hypXMin, hypXMax], [nsv1, nsv2], 'k')
+
+        # decision boundary hyperplane
+        # x.w + b = 0
+        db1 = hyperplane(hypXMin, self.w, self.b, 0)
+        db2 = hyperplane(hypXMax, self.w, self.b, 0)
+        self.axis.plot([hypXMin, hypXMax], [db1, db2], 'y--')
+
+        plot.show()
+
 
 
 dataDict = {-1: np.array([[1, 7],
@@ -101,4 +148,6 @@ dataDict = {-1: np.array([[1, 7],
                          [6, -1],
                          [7, 3]])}
 
-
+svm = SupportVectorMachine()
+svm.fit(data=dataDict)
+svm.visualize()
