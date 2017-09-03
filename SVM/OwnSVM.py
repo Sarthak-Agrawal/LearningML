@@ -86,13 +86,16 @@ class SupportVectorMachine:
                 self.b = optimumChoice[1]
                 latestOptimum = optimumChoice[0][0] + step*2
 
+        for yi in self.data:
+            for xi in self.data[yi]:
+                print(xi, ": ", (np.dot(self.w, xi) + self.b))
+
     def predict(self, features):
         # classification = sign( x.w + b )
         classification = np.sign(np.dot(np.array(features), self.w) + self.b)
         if classification != 0 and self.visualization:
-            self.axis.scatter(features[0], features[1], size=200, marker='*', c=self.colors[classification])
+            self.axis.scatter(features[0], features[1], s=200, marker='*', c=self.colors[classification])
         return classification
-
 
     def visualize(self):
         for i in dataDict:
@@ -150,4 +153,10 @@ dataDict = {-1: np.array([[1, 7],
 
 svm = SupportVectorMachine()
 svm.fit(data=dataDict)
+
+predict = [[0, 10], [1, 3], [3, 4], [3, 5], [5, 5], [5, 6], [6, -5], [5, 8]]
+
+for point in predict:
+    svm.predict(point)
+
 svm.visualize()
