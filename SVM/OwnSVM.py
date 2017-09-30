@@ -125,13 +125,13 @@ class SupportVectorMachine:
         # x.w + b = 1
         psv1 = hyperplane(hypXMin, self.w, self.b, 1)
         psv2 = hyperplane(hypXMax, self.w, self.b, 1)
-        self.axis.plot([hypXMin, hypXMax], [psv1, psv2], 'k')
+        # self.axis.plot([hypXMin, hypXMax], [psv1, psv2], 'k')
 
         # negative support vector hyperplane
         # x.w + b = -1
         nsv1 = hyperplane(hypXMin, self.w, self.b, -1)
         nsv2 = hyperplane(hypXMax, self.w, self.b, -1)
-        self.axis.plot([hypXMin, hypXMax], [nsv1, nsv2], 'k')
+        # self.axis.plot([hypXMin, hypXMax], [nsv1, nsv2], 'k')
 
         # decision boundary hyperplane
         # x.w + b = 0
@@ -154,9 +154,9 @@ dataDict = {-1: np.array([[1, 7],
 svm = SupportVectorMachine()
 svm.fit(data=dataDict)
 
-predict = [[0, 10], [1, 3], [3, 4], [3, 5], [5, 5], [5, 6], [6, -5], [5, 8]]
+# predict = [[0, 10], [1, 3], [3, 4], [3, 5], [5, 5], [5, 6], [6, -5], [5, 8]]
 
-for point in predict:
-    svm.predict(point)
+# for point in predict:
+#     svm.predict(point)
 
 svm.visualize()
