@@ -3,6 +3,7 @@ from matplotlib import style
 import pandas as pd
 import numpy as np
 from sklearn.cluster import KMeans
+from sklearn import preprocessing
 
 style.use('ggplot')
 plot.switch_backend('TkAgg')
@@ -26,9 +27,14 @@ home.dest Home/Destination
 
 df = pd.read_excel('titanic.xls')
 df.drop(['body', 'name'], 1, inplace=True)
+'''
+The dataframe *should* be read as numbers where there are numbers. For some reason, Pandas will seemingly randomly read 
+some rows in columns as strings, despite even the strings being actual number. Makes no sense to me, so I just convert 
+to numeric to be totally certain.
+'''
 df.apply(pd.to_numeric, errors='ignore')
 df.fillna(0, inplace=True)
-print(df.head())
+# print(df.head())
 
 
 def handleNonNumericalData(df):
@@ -42,16 +48,33 @@ def handleNonNumericalData(df):
         if df[column].dtype != np.int64 and df[column].dtype != np.float64:
             columnContents = df[column].values.tolist()
             uniqueElements = set(columnContents)
-            x=0
+            x = 0
             for unique in uniqueElements:
                 if unique not in textDigitVals:
                     textDigitVals[unique] = x
                     x += 1
 
-            # The map() function applies a given to function to each item of an iterable and returns a list of the results.
+            # The map() fn(x) applies a given to function to each item of an iterable and returns a list of the results.
             df[column] = list(map(convertToInt, df[column]))
 
     return df
 
 df = handleNonNumericalData(df)
-print(df.head())
+# print(df.head())
+df.drop(['ticket'], 1, inplace=True)
+x = np.array(df.drop(['survived'], 1).astype(float))
+x = preprocessing.scale(x)
+y = np.array(df['survived'])
+
+classifier = KMeans(n_clusters=2)
+classifier.fit(x)
+
+correct = 0
+for i in range(len(x)):
+    predictMe = np.array(x[i].astype(float))
+    predictMe = predictMe.reshape(-1, len(predictMe))
+    prediction = classifier.predict(predictMe)
+    if y[i] == prediction:
+        correct = correct + 1
+
+print(max(correct/len(x), 1 - correct/len(x)))
