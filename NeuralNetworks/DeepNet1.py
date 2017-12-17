@@ -39,3 +39,11 @@ def neuralNetworkModel(data):
     return output
 
 
+def trainNeuralNetwork(x):
+    prediction = neuralNetworkModel(x)
+    cost = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(logits=prediction, labels=y))
+    optimizer = tf.train.AdamOptimizer().minimize(cost)
+    hmEpochs = 10
+    with tf.Session as session:
+        session.run(tf.global_variables_initializer())
+
