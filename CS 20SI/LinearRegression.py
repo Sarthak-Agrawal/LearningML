@@ -3,7 +3,7 @@ import tensorflow as tf
 import pandas as pd
 import numpy as np
 
-dataFile = "fireAndTheft.xls"
+dataFile = "data/fireAndTheft.xls"
 
 df = pd.read_excel(dataFile)
 data = df.as_matrix()

@@ -1,3 +1,4 @@
 venv/*
 .idea/*
 CS 20SI/graphs/*
+CS 20SI/data/mnist/
