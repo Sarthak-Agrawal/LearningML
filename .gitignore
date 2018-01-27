@@ -3,3 +3,4 @@ venv/*
 CS 20SI/graphs/*
 CS 20SI/data/mnist/
 CS 20SI/assignment1.py
+NeuralNetworks/data/
