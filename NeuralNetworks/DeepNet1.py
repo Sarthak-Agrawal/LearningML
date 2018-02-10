@@ -7,9 +7,10 @@ from tensorflow.examples.tutorials.mnist import input_data
 
 mnist = input_data.read_data_sets("data/", one_hot=True)
 
-nNodesHl11 = 500
-nNodesHl12 = 500
+nNodesHl11 = 784
+nNodesHl12 = 600
 nNodesHl13 = 500
+# nNodesHl14 = 300
 
 nClasses = 10
 batchSize = 100
@@ -24,6 +25,8 @@ def neuralNetworkModel(data):
                     'biases': tf.Variable(tf.random_normal([nNodesHl12]))}
     hiddenLayer3 = {'weights': tf.Variable(tf.random_normal([nNodesHl12, nNodesHl13])),
                     'biases': tf.Variable(tf.random_normal([nNodesHl13]))}
+    # hiddenLayer4 = {'weights': tf.Variable(tf.random_normal([nNodesHl13, nNodesHl14])),
+    #                 'biases': tf.Variable(tf.random_normal([nNodesHl14]))}
     outputLayer = {'weights': tf.Variable(tf.random_normal([nNodesHl13, nClasses])),
                     'biases': tf.Variable(tf.random_normal([nClasses]))}
     l1 = tf.add(tf.matmul(data, hiddenLayer1['weights']), hiddenLayer1['biases'])
@@ -35,13 +38,16 @@ def neuralNetworkModel(data):
     l3 = tf.add(tf.matmul(l2, hiddenLayer3['weights']), hiddenLayer3['biases'])
     l3 = tf.nn.relu(l3)
 
+    # l4 = tf.add(tf.matmul(l3, hiddenLayer4['weights']), hiddenLayer4['biases'])
+    # l4 = tf.nn.relu(l4)
+
     output = tf.add(tf.matmul(l3, outputLayer['weights']), outputLayer['biases'])
     return output
 
 
 def trainNeuralNetwork(x):
     prediction = neuralNetworkModel(x)
-    cost = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(logits=prediction, labels=y))
+    cost = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits_v2(labels=y, logits=prediction))
     optimizer = tf.train.AdamOptimizer().minimize(cost)
     hmEpochs = 10
     with tf.Session() as sess:
@@ -55,7 +61,7 @@ def trainNeuralNetwork(x):
 
             print('Epoch', epoch, 'completed out of', hmEpochs, 'loss:', epochLoss/int(mnist.train.num_examples/batchSize))
 
-        correctPreds = tf.equal(tf.argmax(prediction, 1), tf.argmax(y, 1), name="CorrectPreds")
+        correctPreds = tf.equal(tf.argmax(prediction, axis=1), tf.argmax(y, axis=1), name="CorrectPreds")
         accuracy = tf.reduce_mean(tf.cast(correctPreds, 'float'))
         print("Accuracy : ", accuracy.eval({x:mnist.test.images, y:mnist.test.labels}))
 
