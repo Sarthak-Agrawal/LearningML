@@ -8,7 +8,11 @@ from collections import Counter
 lemmatizer = WordNetLemmatizer()
 numberOfLines = 10000000
 
-
+'''
+data:
+pos.txt : https://pythonprogramming.net/static/downloads/machine-learning-data/pos.txt
+neg.txt : https://pythonprogramming.net/static/downloads/machine-learning-data/neg.txt
+'''
 def createLexicon(pos, neg):
     lexicon = []
     for file in [pos, neg]:
