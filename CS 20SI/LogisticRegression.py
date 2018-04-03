@@ -4,9 +4,9 @@ from tensorflow.examples.tutorials.mnist import input_data
 
 MNIST = input_data.read_data_sets('data/mnist', one_hot=True)
 
-learningRate = 0.01
+learningRate = 0.02
 batchSize = 128
-numberOfEpochs = 10
+numberOfEpochs = 30
 
 X = tf.placeholder(tf.float32, [batchSize, 784], name="image")
 Y = tf.placeholder(tf.float32, [batchSize, 10], name="label")
@@ -20,7 +20,7 @@ Y_predicted = softmax(logits)
 loss = cross_entropy(Y, Y_predicted)
 '''
 logits = tf.matmul(X, w) + b
-entropy = tf.nn.softmax_cross_entropy_with_logits(logits=logits, labels=Y)
+entropy = tf.nn.softmax_cross_entropy_with_logits_v2(labels=Y,logits=logits)
 loss = tf.reduce_mean(entropy)
 
 optimizer = tf.train.GradientDescentOptimizer(learning_rate=learningRate).minimize(loss)
@@ -47,7 +47,8 @@ with tf.Session() as sess:
     # test
     numberOfBatches = int(MNIST.test.num_examples/batchSize)
     preds = tf.nn.softmax(logits, name='testPreds')
-    correctPreds = tf.equal(tf.argmax(preds, 1), tf.argmax(Y, 1), name="CorrectPreds")
+    correctPreds = tf.equal(tf.argmax(preds, axis=1), tf.argmax(Y, axis=1),
+                            name="CorrectPreds")
     accuracy = tf.reduce_sum(tf.cast(correctPreds, tf.float32), name='accuracy')
 
     totalCorrectPreds=0
